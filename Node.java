@@ -1,6 +1,7 @@
 
 public class Node {
-	int col, row;
+	int col, row, score;
+
 	String val;
 	
 	public Node(int row, int col, String val) {
@@ -9,7 +10,16 @@ public class Node {
 		this.val = val;
 	}
 
+	public void printNode() {
+		System.out.println("(" + row + ", " + col + ", " + val + ")");
+	}
 	
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
+	}
 	public int getCol() {
 		return col;
 	}

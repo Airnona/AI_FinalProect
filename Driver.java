@@ -3,14 +3,14 @@ import java.util.Scanner;
 
 public class Driver {
 	static ArrayList<Node> map = new ArrayList<Node>();
+	static ArrayList<Node> totalList = new ArrayList<Node>();
+	static ArrayList<Node> oList = new ArrayList<Node>();
+	static ArrayList<Node> xList = new ArrayList<Node>();
 	
 	public static void main(String[] args) {
 		createMap();
 		printMap();
-		while(true) {
-			editMap("O");
-			printMap();
-		}
+		runGame();
 	}
 	
 	public static void createMap(){
@@ -88,6 +88,13 @@ public class Driver {
 			index = (8 * (inputRow - 1)) + inputCol - 1;
 			if(map.get(index).getVal() == "-") {
 				map.get(index).setVal(val);
+				totalList.add(map.get(index));
+				if(val == "O") {
+					oList.add(map.get(index));
+				}
+				else {
+					xList.add(map.get(index));
+				}
 			}
 			else {
 				System.out.println("This spot on the board already has a value. Try again.");
@@ -97,4 +104,68 @@ public class Driver {
 			exit = true;
 		}
 	}
+	
+    public static void runGame() {
+//    	ArrayList<Node> totalList = new ArrayList<Node>();
+//    	ArrayList<Node> oList = new ArrayList<Node>();
+//    	ArrayList<Node> xList = new ArrayList<Node>();
+    	ArrayList<Node> open = new ArrayList<Node>();
+    	Scanner sc = new Scanner(System.in);
+
+    	String mirrValue, playerValue;
+    	boolean exit = false, playerTurn = true;;
+    	int input = -1;
+    	
+    	System.out.println("Is the player going first or second? Enter 1 or 2");
+    	input = sc.nextInt();
+    	
+    	if(input == 1) {						//Player goes first
+    		playerValue = "O";
+    		mirrValue = "X";
+    		
+    		editMap(playerValue);
+    		printMap();
+    		playerTurn = false;					//Switching turns
+    	}
+    	else {									//AI goes first
+    		playerValue = "X";
+    		mirrValue = "O";
+    		
+    		map.get(27).setVal(mirrValue);		//Default entry for AI first turn
+    		oList.add(map.get(27));
+    		totalList.add(map.get(27));
+    		printMap();
+    		playerTurn = true;					//Switching turns
+    	}
+    	
+    	Mirr mirr = new Mirr(mirrValue);
+    	
+    	while(exit != true) {
+    		mirr.updateArrays(map, totalList, xList, oList);
+//    		System.out.println("Driver printing totalList");
+//    		for(int i = 0; i < totalList.size(); i++) {
+//    			totalList.get(i).printNode();
+//    		}
+    		
+    		if(playerTurn) {
+    			editMap(playerValue);
+        		playerTurn = false;
+        		printMap();
+    		}
+    		else {
+    			open = mirr.findPossible();
+    			
+//    			System.out.println("Open size: " + open.size());
+//    			for(int i = 0; i < open.size(); i++) {
+//    				open.get(i).printNode();
+//    			}
+    			editMap(mirrValue);
+    			printMap();
+    			playerTurn = true;
+    		}
+    		//checkVictory();
+    	}
+    	printMap();
+    	
+    }
 }
